@@ -28,7 +28,7 @@ function make_reactant_compatible(opt::Optimisers.AdamW)
         Utils.to_rarray(opt.beta; track_numbers=AbstractFloat),
         Utils.to_rarray(opt.lambda; track_numbers=AbstractFloat),
         opt.epsilon,
-        opt.coupled
+        opt.couple
     )
 end
 
