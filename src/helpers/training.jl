@@ -64,7 +64,7 @@ Constructor for [`TrainState`](@ref).
 """
 function TrainState(model::AbstractLuxLayer, ps, st, optimizer::Optimisers.AbstractRule)
     st_opt = if get_device_type(ps) <: ReactantDevice
-        Optimisers.setup(
+        ReactantCompatibleOptimisers.setup_optimiser_with_jit(
             ReactantCompatibleOptimisers.make_reactant_compatible(optimizer), ps
         )
     else

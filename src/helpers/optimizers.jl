@@ -7,7 +7,7 @@ using Optimisers: Optimisers, AbstractRule
 
 using ..Lux: Lux, Utils
 
-abstract type ReactantCompatibleOptimisersRule <: AbstractRule end
+function setup_optimiser_with_jit end
 
 function make_reactant_compatible(opt::AbstractRule)
     return Utils.to_rarray(opt; track_numbers=AbstractFloat)
