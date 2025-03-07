@@ -10,13 +10,13 @@ using ..Lux: Lux, Utils
 function setup_optimiser_with_jit end
 
 function make_reactant_compatible(opt::AbstractRule)
-    return Utils.to_rarray(opt; track_numbers=AbstractFloat)
+    return Utils.to_rarray(opt; track_numbers = AbstractFloat)
 end
 
 function make_reactant_compatible(opt::Optimisers.RMSProp)
     return Optimisers.RMSProp(
-        Utils.to_rarray(opt.eta; track_numbers=AbstractFloat),
-        Utils.to_rarray(opt.rho; track_numbers=AbstractFloat),
+        Utils.to_rarray(opt.eta; track_numbers = AbstractFloat),
+        Utils.to_rarray(opt.rho; track_numbers = AbstractFloat),
         opt.epsilon,
         opt.centred
     )
@@ -24,9 +24,9 @@ end
 
 function make_reactant_compatible(opt::Optimisers.AdamW)
     return Optimisers.AdamW(
-        Utils.to_rarray(opt.eta; track_numbers=AbstractFloat),
-        Utils.to_rarray(opt.beta; track_numbers=AbstractFloat),
-        Utils.to_rarray(opt.lambda; track_numbers=AbstractFloat),
+        Utils.to_rarray(opt.eta; track_numbers = AbstractFloat),
+        Utils.to_rarray(opt.beta; track_numbers = AbstractFloat),
+        Utils.to_rarray(opt.lambda; track_numbers = AbstractFloat),
         opt.epsilon,
         opt.couple
     )
@@ -34,8 +34,8 @@ end
 
 function make_reactant_compatible(opt::Optimisers.ClipNorm)
     return Optimisers.ClipNorm(
-        Utils.to_rarray(opt.omega; track_numbers=AbstractFloat),
-        Utils.to_rarray(opt.p; track_numbers=AbstractFloat),
+        Utils.to_rarray(opt.omega; track_numbers = AbstractFloat),
+        Utils.to_rarray(opt.p; track_numbers = AbstractFloat),
         opt.throw
     )
 end
@@ -45,7 +45,7 @@ function make_reactant_compatible(opt::Optimisers.OptimiserChain)
 end
 
 function make_reactant_compatible(opt::Optimisers.AccumGrad)
-    return AccumGrad(Utils.to_rarray(opt.n; track_numbers=Integer))
+    return AccumGrad(Utils.to_rarray(opt.n; track_numbers = Integer))
 end
 
 @concrete struct AccumGrad <: AbstractRule
@@ -53,6 +53,6 @@ end
 end
 
 # XXX: the counter needs to match the client / device?
-Optimisers.init(::AccumGrad, x) = zero(x), Utils.to_rarray(1; track_numbers=Integer)
+Optimisers.init(::AccumGrad, x) = zero(x), Utils.to_rarray(1; track_numbers = Integer)
 
 end
