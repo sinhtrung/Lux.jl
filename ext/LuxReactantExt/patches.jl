@@ -6,7 +6,11 @@ Lux.calculate_pool_dims(g::Lux.GlobalPoolMode, ::TracedRArray) = g
 # Optimisers AccumGrad
 function Optimisers.apply!(opt::Lux.ReactantCompatibleOptimisers.AccumGrad, state, x, dx)
     accum_dx, counter = state
-    @. accum_dx += dx / opt.n
+    @trace if counter == 1
+        @. accum_dx = dx / opt.n
+    else
+        @. accum_dx += dx / opt.n
+    end
     @trace if counter == opt.n
         dx_final = dx
         counter = 1

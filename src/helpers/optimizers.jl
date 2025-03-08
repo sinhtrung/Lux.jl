@@ -3,47 +3,43 @@
 module ReactantCompatibleOptimisers
 
 using ConcreteStructs: @concrete
+using Functors: fmap
 using Optimisers: Optimisers, AbstractRule
 
 using ..Lux: Lux, Utils
 
-function make_reactant_compatible(opt::AbstractRule)
-    return Utils.to_rarray(opt; track_numbers = AbstractFloat)
+function make_reactant_compatible(leaf::Optimisers.Leaf{<:Optimisers.OptimiserChain})
+    res = make_reactant_compatible.(leaf.rule.opts, leaf.state)
+    new_opts = first.(res)
+    new_state = last.(res)
+    rule = Optimisers.OptimiserChain(new_opts...)
+    return Optimisers.Leaf(rule, new_state, leaf.frozen)
 end
 
-function make_reactant_compatible(opt::Optimisers.RMSProp)
-    return Optimisers.RMSProp(
-        Utils.to_rarray(opt.eta; track_numbers = AbstractFloat),
-        Utils.to_rarray(opt.rho; track_numbers = AbstractFloat),
-        opt.epsilon,
-        opt.centred
+function make_reactant_compatible(leaf::Optimisers.Leaf{<:AbstractRule})
+    rule, state = make_reactant_compatible(leaf.rule, leaf.state)
+    return Optimisers.Leaf(rule, state, leaf.frozen)
+end
+
+function make_reactant_compatible(opt::Optimisers.OptimiserChain, state)
+    res = make_reactant_compatible.(opt.opts, state)
+    new_opts = first.(res)
+    new_state = last.(res)
+    return Optimisers.OptimiserChain(new_opts...), new_state
+end
+
+function make_reactant_compatible(opt::Optimisers.AbstractRule, state)
+    return (
+        Utils.to_rarray(opt; track_numbers = AbstractFloat),
+        Utils.to_rarray(state; track_numbers = AbstractFloat),
     )
 end
 
-function make_reactant_compatible(opt::Optimisers.AdamW)
-    return Optimisers.AdamW(
-        Utils.to_rarray(opt.eta; track_numbers = AbstractFloat),
-        Utils.to_rarray(opt.beta; track_numbers = AbstractFloat),
-        Utils.to_rarray(opt.lambda; track_numbers = AbstractFloat),
-        opt.epsilon,
-        opt.couple
+function make_reactant_compatible(opt::Optimisers.AccumGrad, state)
+    return (
+        AccumGrad(Utils.to_rarray(opt.n; track_numbers = Integer)),
+        Utils.to_rarray(state; track_numbers = Integer),
     )
-end
-
-function make_reactant_compatible(opt::Optimisers.ClipNorm)
-    return Optimisers.ClipNorm(
-        Utils.to_rarray(opt.omega; track_numbers = AbstractFloat),
-        Utils.to_rarray(opt.p; track_numbers = AbstractFloat),
-        opt.throw
-    )
-end
-
-function make_reactant_compatible(opt::Optimisers.OptimiserChain)
-    return Optimisers.OptimiserChain(make_reactant_compatible.(opt.opts))
-end
-
-function make_reactant_compatible(opt::Optimisers.AccumGrad)
-    return AccumGrad(Utils.to_rarray(opt.n; track_numbers = Integer))
 end
 
 @concrete struct AccumGrad <: AbstractRule

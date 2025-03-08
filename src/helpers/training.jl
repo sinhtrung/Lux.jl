@@ -68,7 +68,7 @@ function TrainState(model::AbstractLuxLayer, ps, st, optimizer::Optimisers.Abstr
         st_opt = fmap(
             ReactantCompatibleOptimisers.make_reactant_compatible,
             st_opt;
-            exclude = Base.Fix2(isa, Optimisers.AbstractRule)
+            exclude = Base.Fix2(isa, Optimisers.Leaf)
         )
     end
     return TrainState(nothing, nothing, model, ps, st, optimizer, st_opt, 0)
