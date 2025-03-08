@@ -16,7 +16,3 @@ function Optimisers.apply!(opt::Lux.ReactantCompatibleOptimisers.AccumGrad, stat
     end
     return (accum_dx, counter), dx_final
 end
-
-function Lux.ReactantCompatibleOptimisers.setup_optimiser_with_jit(opt, ps)
-    return @jit Optimisers.setup(opt, ps)
-end
