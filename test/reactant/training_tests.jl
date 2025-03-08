@@ -52,7 +52,7 @@
                     Momentum(0.01f0),
                     Adam(0.01f0),
                     AdamW(0.01f0),
-                    Optimisers.OptimiserChain(AccumGrad(5), Adam(0.01f0)),
+                    OptimiserChain(AccumGrad(5), Adam(0.01f0)),
                 )
                 train_state = Training.TrainState(model, ps, st, opt)
 
